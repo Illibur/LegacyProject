@@ -21,9 +21,9 @@ pipeline {
       steps {
         script {
           // We build and export to local conan cache inside the container
-          sh 'conan create libcore/ --build=missing'
-          sh 'conan create libutils/ --build=missing'
-          sh 'conan create libmarket/ --build=missing'
+          sh 'conan create libcore --build=missing'
+          sh 'conan create libutils --build=missing'
+          sh 'conan create libmarket --build=missing'
         }
       }
     }
@@ -67,9 +67,41 @@ pipeline {
       }
     }
 
+    stage('Customer Variant Release') {
+      steps {
+        script {
+          def customerRegistry = [
+            'customer_a': [apps: ['engine', 'gateway'], config_source: 'deployments/customer_a/config.ini'],
+            'customer_b': [apps: ['engine'],            config_source: 'deployments/customer_b/config.ini'],
+            'customer_c': [apps: ['gateway'],           config_source: 'deployments/customer_c/config.ini']
+          ]
+
+          customerRegistry.each { name, details ->
+            def releasePath = "releases/${name}"
+            sh "mkdir -p ${releasePath}"
+
+            details.apps.each { appName ->
+              sh "cp product_bundle/${appName} ${releasePath}/"
+              sh "cp product_bundle/run_${appName}.sh ${releasePath}/"
+            }
+
+            sh "cp product_bundle/*.so ${releasePath}/"
+
+            if (fileExists(details.config_source)) {
+              sh "cp ${details.config_source} ${releasePath}/config.ini"
+            } else {
+              sh "echo 'default=true' > ${releasePath}/config.ini"
+            }
+
+            sh "tar -cvzf ${name}_v1.0_delivery.tar.gz -C ${releasePath} ."
+          }
+        }
+      }
+    }
+
     stage('Archive Artifacts') {
       steps {
-        archiveArtifacts artifacts: 'LegacyProject_Product_v1.0.tar.gz'
+        archiveArtifacts artifacts: '*.tar.gz', fingerprint: true
       }
     }
   }
