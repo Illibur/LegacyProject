@@ -1,0 +1,11 @@
+build/
+*/build/
+bin/
+obj/
+
+*.o
+*.obj
+*.so
+*.a
+*.lib
+*.dll
