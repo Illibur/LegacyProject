@@ -5,3 +5,9 @@ project(libutils CXX)
 add_library(libutils STATIC src/libutils.cpp)
 
 target_include_directories(libutils PUBLIC include)
+
+# changes for conan
+set_target_properties(libutils PROPERTIES PUBLIC_HEADER include/libutils.h)
+install(TARGETS libutils
+  ARCHIVE DESTINATION lib
+  PUBLIC_HEADER DESTINATION include)

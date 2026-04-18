@@ -1,13 +1,17 @@
 cmake_minimum_required(VERSION 3.15)
 project(libmarket CXX)
 
+# this should be searched for in conan packages
+find_package(libcore REQUIRED)
+
 # 1. Define this library
 add_library(libmarket SHARED src/libmarket.cpp)
 target_include_directories(libmarket PUBLIC include)
 
-# 2. Tell CMake where the 'libcore' dependency is
-# For now, we point to the local folders. 
-# (Later, Conan will do this automatically)
-target_include_directories(libmarket PRIVATE ../libcore/include)
-target_link_directories(libmarket PRIVATE ../libcore/build)
-target_link_libraries(libmarket libcore)
+# conan shoudl provice the libcore (Namespace::Name)
+target_link_libraries(libmarket libcore::libcore)
+
+set_target_properties(libmarket PROPERTIES PUBLIC_HEADER include/libmarket.h)
+install(TARGETS libmarket
+  LIBRARY DESTINATION lib
+  PUBLIC_HEADER DESTINATION include)
