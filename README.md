@@ -174,3 +174,74 @@ The alternative would be to have separate builds for each customer. In this case
     - security scans for conan dependencies and docker base image for vulnerabilities;
     - the mentioned database scripts. They can be added to Jenkinsfile to be packed in the final archive if needed;
     - any testing stages for the libraries.
+
+## Results
+
+Product bundle:
+
+```bash
+personal@machine:.../LegacyProject_Product_v1.0/product_bundle$ ls
+engine  gateway  liblibcore.so  liblibmarket.so  run_engine.sh  run_gateway.sh
+personal@machine:.../LegacyProject_Product_v1.0/product_bundle$ ./run_engine.sh
+[Engine] Starting high-performance engine...
+--- Loading Config: config.ini ---
+Warning: config.ini not found. Using defaults.
+
+[libcore] Initializing Core Monolith Components. Version 1.0.1
+[libmarket] Accessing market data...
+[libcore] Initializing Core Monolith Components. Version 1.0.1
+[libutils] Utility helper (Static Link)
+personal@machine:.../LegacyProject_Product_v1.0/product_bundle$ ./run_gateway.sh
+[Gateway] Starting API Gateway...
+[libcore] Initializing Core Monolith Components. Version 1.0.1
+[libutils] Utility helper (Static Link)
+```
+CustomerA:
+
+```bash
+personal@machine:.../customer_a_v1.0_delivery$ ls
+config.ini  engine  gateway  liblibcore.so  liblibmarket.so  run_engine.sh  run_gateway.sh
+personal@machine:.../customer_a_v1.0_delivery$ ./run_engine.sh
+[Engine] Starting high-performance engine...
+--- Loading Config: config.ini ---
+Config Param: mode=premium
+Config Param: threads=8
+
+[libcore] Initializing Core Monolith Components. Version 1.0.1
+[libmarket] Accessing market data...
+[libcore] Initializing Core Monolith Components. Version 1.0.1
+[libutils] Utility helper (Static Link)
+personal@machine:.../customer_a_v1.0_delivery$ ./run_gateway.sh
+[Gateway] Starting API Gateway...
+[libcore] Initializing Core Monolith Components. Version 1.0.1
+[libutils] Utility helper (Static Link)
+```
+
+CustomerB:
+
+```bash
+personal@machine:.../customer_b_v1.0_delivery$ ls
+config.ini  engine  liblibcore.so  liblibmarket.so  run_engine.sh
+personal@machine:.../customer_b_v1.0_delivery$ ./run_engine.sh
+[Engine] Starting high-performance engine...
+--- Loading Config: config.ini ---
+Config Param: mode=basic
+Config Param: threads=4
+
+[libcore] Initializing Core Monolith Components. Version 1.0.1
+[libmarket] Accessing market data...
+[libcore] Initializing Core Monolith Components. Version 1.0.1
+[libutils] Utility helper (Static Link)
+```
+
+CustomerC:
+
+```bash
+personal@machine:.../customer_c_v1.0_delivery$ ls
+config.ini  gateway  liblibcore.so  liblibmarket.so  run_gateway.sh
+personal@machine:.../customer_c_v1.0_delivery$ ./run_gateway.sh
+[Gateway] Starting API Gateway...
+[libcore] Initializing Core Monolith Components. Version 1.0.1
+[libutils] Utility helper (Static Link)
+```
+
