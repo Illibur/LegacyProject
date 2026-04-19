@@ -3,7 +3,7 @@ from conan.tools.cmake import CMake, cmake_layout
 
 class LibCoreConan(ConanFile):
   name = "libcore"
-  version = "1.0.0"
+  version = "1.0.1"
   package_type = "shared-library"
 
   # Binary configuration

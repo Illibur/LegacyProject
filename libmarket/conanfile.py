@@ -12,7 +12,7 @@ class LibMarketConan(ConanFile):
 
   # the important line that adds the dependency
   def requirements(self):
-    self.requires("libcore/1.0.0")
+    self.requires("libcore/1.0.1")
 
   def layout(self):
     cmake_layout(self)

@@ -46,10 +46,23 @@ pipeline {
     stage('Create Portable Bundle') {
       steps {
         script {
+          sh 'rm -rf product_bundle'
           sh 'mkdir -p product_bundle'
           sh 'cp gateway/build/Release/gateway product_bundle/'
           sh 'cp engine/build/Release/engine product_bundle/'
-          sh 'find ${CONAN_HOME}/p -name "*.so" -exec cp {} product_bundle/ \\;'
+//          sh 'find ${CONAN_HOME}/p -name "*.so" -exec cp {} product_bundle/ \\;
+
+          dir('engine') {
+            sh 'conan install . --output-folder=deploy_out --deployer=direct_deploy --build=never'
+//            sh 'cp -L full_deploy/host/lib/*.so ../product_bundle/ || true'
+	    sh 'find deploy_out -name "*.so" -exec cp -v {} ../product_bundle/ \\;'
+          }
+          dir('gateway') {
+            sh 'conan install . --output-folder=deploy_out --deployer=direct_deploy --build=never'
+//            sh 'cp -L full_deploy/host/lib/*.so ../product_bundle/ || true'
+	    sh 'find deploy_out -name "*.so" -exec cp -v {} ../product_bundle/ \\;'
+          }
+
           sh '''
             echo "#!/bin/sh" > product_bundle/run_engine.sh
             echo "export LD_LIBRARY_PATH=\\$(dirname \\\$0)" >> product_bundle/run_engine.sh
